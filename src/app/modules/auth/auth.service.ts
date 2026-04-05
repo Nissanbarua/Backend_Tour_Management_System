@@ -3,6 +3,8 @@ import { IUser } from "../user/user.interface";
 import { User } from "../user/user.model";
 import httpStatus from "http-status-codes";
 import bcryptjs from "bcryptjs";
+import { genarateToken } from "../../utils/jwt";
+import { envVars } from "../../config/env";
 
 const credentialLogin = async (payload: Partial<IUser>) => {
   const { email, password } = payload;
@@ -22,8 +24,19 @@ const credentialLogin = async (payload: Partial<IUser>) => {
     throw new AppError(httpStatus.BAD_REQUEST, "Incorrect Password");
   }
 
-  return {
+  const jwtPayload = {
+    userId: isUserExist._id,
     email: isUserExist.email,
+    role: isUserExist.role,
+  };
+
+  const accessToken = genarateToken(
+    jwtPayload,
+    envVars.JWT_ACCESS_SECRET,
+    envVars.JWT_ACCESS_EXPIRE,
+  );
+  return {
+    accessToken,
   };
 };
 
