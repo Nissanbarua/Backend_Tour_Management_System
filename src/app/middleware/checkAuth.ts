@@ -23,9 +23,11 @@ export const checkAuth =
         throw new AppError(httpStatus.BAD_REQUEST, "You are not permitted");
       }
 
+      req.user = verifiedToken;
+
       next();
     } catch (error) {
-      console.log("Jwt error",error);
+      console.log("Jwt error", error);
       next(error);
     }
   };
